@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef RGB_BACKLIGHT_NK65
-#error RGB_BACKLIGHT_NK65 not defined, recheck config.h
+#    error RGB_BACKLIGHT_NK65 not defined, recheck config.h
 #endif
 
 #include "nk65.h"
@@ -25,30 +25,24 @@
  * Middle LED is blue and red. LED driver 2 RGB 6 Red and Blue channel
  * Bottom LED is red only LED driver 2 RGB 6 Green channel.
  */
-bool led_update_kb(led_t led_state) {
-    bool res = led_update_user(led_state);
-    if(res) {
-        if (led_state.caps_lock) {
-            IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
-        } else {
-            IS31FL3733_set_color( 7+64-1, 0, 0, 0 );
-        }
-    }
-    return res;
-}
 
 __attribute__((weak)) layer_state_t layer_state_set_user(layer_state_t state) {
     uint8_t R = 0;
     uint8_t G = 0;
     uint8_t B = 0;
     if (state & (1UL << 1)) {
+        IS31FL3733_set_color(7 + 64 - 1, 0, 255, 0);
+    } else {
+        IS31FL3733_set_color(7 + 64 - 1, 0, 0, 0);
+    }
+    if (state & (1UL << 2)) {
         R = 255;
         B = 255;
     }
-    if (state & (1UL << 2)) {
+    if (state & (1UL << 3)) {
         G = 255;
     }
 
-    IS31FL3733_set_color( 6+64-1, R, G, B );
-  return state;
+    IS31FL3733_set_color(6 + 64 - 1, R, G, B);
+    return state;
 }
